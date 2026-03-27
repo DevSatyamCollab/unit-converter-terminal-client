@@ -7,15 +7,19 @@ import (
 	"github.com/charmbracelet/huh"
 )
 
-func newLengthForm() *huh.Form {
-	var val, fromUnit, toUnit string
+var (
+	LengthVal, LengthFromUnit, LengthToUnit                string
+	WeightVal, WeightFromUnit, WeightToUnit                string
+	TemperatureVal, TemperatureFromUnit, TemperatureToUnit string
+)
 
+func newLengthForm() *huh.Form {
 	return huh.NewForm(
 		huh.NewGroup(
 			huh.NewInput().
 				Title("Enter the length to convert").
 				CharLimit(10).
-				Value(&val).
+				Value(&LengthVal).
 				Validate(func(s string) error {
 					return isFloat(s)
 				}),
@@ -25,27 +29,25 @@ func newLengthForm() *huh.Form {
 				Options(
 					huh.NewOptions("mm", "cm", "m", "km", "in", "ft", "yd", "mil")...,
 				).
-				Value(&fromUnit),
+				Value(&LengthFromUnit),
 
 			huh.NewSelect[string]().
 				Title("Unit to Convert to").
 				Options(
 					huh.NewOptions("mm", "cm", "m", "km", "in", "ft", "yd", "mil")...,
 				).
-				Value(&toUnit),
+				Value(&LengthToUnit),
 		),
 	)
 }
 
 func newWeightForm() *huh.Form {
-	var val, fromUnit, toUnit string
-
 	return huh.NewForm(
 		huh.NewGroup(
 			huh.NewInput().
 				Title("Enter the weight to convert").
 				CharLimit(10).
-				Value(&val).
+				Value(&WeightVal).
 				Validate(func(s string) error {
 					return isFloat(s)
 				}),
@@ -55,27 +57,25 @@ func newWeightForm() *huh.Form {
 				Options(
 					huh.NewOptions("mg", "g", "kg", "oz", "lb")...,
 				).
-				Value(&fromUnit),
+				Value(&WeightFromUnit),
 
 			huh.NewSelect[string]().
 				Title("Unit to Convert to").
 				Options(
 					huh.NewOptions("mg", "g", "kg", "oz", "lb")...,
 				).
-				Value(&toUnit),
+				Value(&WeightToUnit),
 		),
 	)
 }
 
 func newTemperatureForm() *huh.Form {
-	var val, fromUnit, toUnit string
-
 	return huh.NewForm(
 		huh.NewGroup(
 			huh.NewInput().
 				Title("Enter the temperature to convert").
 				CharLimit(10).
-				Value(&val).
+				Value(&TemperatureVal).
 				Validate(func(s string) error {
 					return isFloat(s)
 				}),
@@ -85,14 +85,14 @@ func newTemperatureForm() *huh.Form {
 				Options(
 					huh.NewOptions("c", "k", "f")...,
 				).
-				Value(&fromUnit),
+				Value(&TemperatureFromUnit),
 
 			huh.NewSelect[string]().
 				Title("Unit to Convert to").
 				Options(
 					huh.NewOptions("c", "k", "f")...,
 				).
-				Value(&toUnit),
+				Value(&TemperatureToUnit),
 		),
 	)
 }

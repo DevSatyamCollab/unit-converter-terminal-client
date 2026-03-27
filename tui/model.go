@@ -1,21 +1,25 @@
 package tui
 
 import (
+	"unit-converter-terminal-client/internal"
+
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/huh"
 )
+
+const numTabs = 3
 
 type model struct {
 	Tabs          []string
 	Forms         []*huh.Form
 	Factories     []func() *huh.Form
 	Style         *Styles
+	UnitConverter []*internal.UnitConverter
 	Width         int
 	Height        int
 	ActiveTab     int
 	ContentWidth  int
-	ResultTab     int
-	ShowingResult bool
+	ShowingResult []bool
 }
 
 func (m model) Init() tea.Cmd {
@@ -36,7 +40,7 @@ func InitialModel() model {
 		Factories:     formFactories,
 		Style:         DefaultStyle(0, 0),
 		ActiveTab:     0,
-		ResultTab:     -1,
-		ShowingResult: false,
+		ShowingResult: make([]bool, numTabs),
+		UnitConverter: make([]*internal.UnitConverter, numTabs),
 	}
 }

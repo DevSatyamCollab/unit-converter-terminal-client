@@ -1,6 +1,10 @@
 package tui
 
-import "github.com/charmbracelet/lipgloss"
+import (
+	"fmt"
+
+	"github.com/charmbracelet/lipgloss"
+)
 
 func (m model) View() string {
 	header := m.Style.header.Render("Unit Converter")
@@ -16,20 +20,11 @@ func (m model) View() string {
 	}
 
 	tabs := lipgloss.JoinHorizontal(lipgloss.Top, renderedTabs...)
-
 	usedHeight := lipgloss.Height(header) + lipgloss.Height(tabs) + lipgloss.Height(footer)
-
 	windowFrameH := m.Style.window.GetVerticalFrameSize()
 	contentHeight := m.Style.container.GetHeight() - usedHeight - windowFrameH - 2
-
 	window := m.Style.window.Height(contentHeight)
-
-	var content string
-	if m.ShowingResult && m.ActiveTab == m.ResultTab {
-		content = "Result"
-	} else {
-		content = m.Forms[m.ActiveTab].View()
-	}
+	content := m.getContent()
 
 	ui := lipgloss.JoinVertical(
 		lipgloss.Left,
@@ -46,4 +41,20 @@ func (m model) View() string {
 		lipgloss.Center,
 		m.Style.container.Render(ui),
 	)
+}
+
+func (m *model) getContent() string {
+	if m.ShowingResult[m.ActiveTab] {
+		// 1 kg = 1000g
+		return fmt.Sprintf(
+			"%.f %s = %.1f %s",
+			m.UnitConverter[m.ActiveTab].Val,
+			m.UnitConverter[m.ActiveTab].FromUnit,
+			m.UnitConverter[m.ActiveTab].Ans,
+			m.UnitConverter[m.ActiveTab].ToUnit,
+		)
+
+	} else {
+		return m.Forms[m.ActiveTab].View()
+	}
 }

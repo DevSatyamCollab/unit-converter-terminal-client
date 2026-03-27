@@ -1,6 +1,9 @@
 package tui
 
 import (
+	"strconv"
+	"unit-converter-terminal-client/internal"
+
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/huh"
 )
@@ -28,11 +31,20 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.ActiveTab = max(m.ActiveTab-1, 0)
 			cmds = append(cmds, m.Forms[m.ActiveTab].Init())
 
-		case "esc":
-			if m.ShowingResult {
-				m.ShowingResult = false
-				m.Forms[m.ResultTab] = m.Factories[m.ResultTab]()
-				return m, m.Forms[m.ResultTab].Init()
+		case "esc": // reset only the current tab
+			if m.ShowingResult[m.ActiveTab] {
+				switch m.ActiveTab {
+				case 0:
+					LengthVal, LengthFromUnit, LengthToUnit = "", "", ""
+				case 1:
+					WeightVal, WeightFromUnit, WeightToUnit = "", "", ""
+				case 2:
+					TemperatureVal, TemperatureFromUnit, TemperatureToUnit = "", "", ""
+				}
+
+				m.ShowingResult[m.ActiveTab] = false
+				m.Forms[m.ActiveTab] = m.Factories[m.ActiveTab]()
+				return m, m.Forms[m.ActiveTab].Init()
 			}
 		}
 	}
@@ -44,9 +56,30 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	// trigger result
-	if !m.ShowingResult && m.Forms[m.ActiveTab].State == huh.StateCompleted {
-		m.ResultTab = m.ActiveTab
-		m.ShowingResult = true
+	if !m.ShowingResult[m.ActiveTab] && m.Forms[m.ActiveTab].State == huh.StateCompleted {
+		var valStr, funit, tunit string
+
+		// Determine which variables to read based on the active tab
+		switch m.ActiveTab {
+		case 0:
+			valStr = LengthVal
+			funit = LengthFromUnit
+			tunit = LengthToUnit
+		case 1:
+			valStr = WeightVal
+			funit = WeightFromUnit
+			tunit = WeightToUnit
+		case 2:
+			valStr = TemperatureVal
+			funit = TemperatureFromUnit
+			tunit = TemperatureToUnit
+		}
+
+		// Directly parse the correctly selected string variable
+		val, _ := strconv.ParseFloat(valStr, 64)
+
+		m.UnitConverter[m.ActiveTab] = internal.NewUnitConverter(funit, tunit, float32(val), float32(0))
+		m.ShowingResult[m.ActiveTab] = true
 	}
 
 	return m, tea.Batch(cmds...)
