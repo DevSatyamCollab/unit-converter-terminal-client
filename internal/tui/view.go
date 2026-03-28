@@ -45,6 +45,13 @@ func (m model) View() string {
 
 func (m *model) getContent() string {
 	if m.ShowingResult[m.ActiveTab] {
+
+		if m.Err != nil {
+			return m.Style.error.Render(
+				fmt.Sprintf("❌ Error: %v\n\n  Press 'esc' to try again.", m.Err),
+			)
+		}
+
 		// 1 kg = 1000g
 		return fmt.Sprintf(
 			"%.f %s = %.1f %s",

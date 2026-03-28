@@ -17,7 +17,7 @@ const (
 type UnitConverter struct {
 	FromUnit string  `json:"fromUnit"`
 	ToUnit   string  `json:"toUnit"`
-	Val      float32 `json:"val"`
+	Val      float32 `json:"value"`
 	Ans      float32 `json:"ans"`
 }
 
@@ -36,7 +36,7 @@ func ConversionRequest(url string, uc *UnitConverter) (*UnitConverter, error) {
 		return nil, fmt.Errorf("failed to marshal: %w", err)
 	}
 
-	client := &http.Client{Timeout: 10 * time.Second}
+	client := &http.Client{Timeout: 1 * time.Second}
 	httpReq, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)

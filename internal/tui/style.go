@@ -13,6 +13,7 @@ type Styles struct {
 	activeTab   lipgloss.Style
 	inactiveTab lipgloss.Style
 	window      lipgloss.Style
+	error       lipgloss.Style
 }
 
 func DefaultStyle(width, height int) *Styles {
@@ -48,6 +49,9 @@ func DefaultStyle(width, height int) *Styles {
 		Border(lipgloss.HiddenBorder()).
 		Height(height - 33).
 		Width(width - 8)
+
+	s.error = s.window.
+		Foreground(lipgloss.Color("196"))
 
 	return s
 }

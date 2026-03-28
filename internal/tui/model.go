@@ -20,7 +20,6 @@ type model struct {
 	ActiveTab     int
 	ContentWidth  int
 	ShowingResult []bool
-	Loading       []bool
 	Err           error
 }
 
@@ -43,7 +42,6 @@ func InitialModel() model {
 		Style:         DefaultStyle(0, 0),
 		ActiveTab:     0,
 		ShowingResult: make([]bool, numTabs),
-		Loading:       make([]bool, numTabs),
 		UnitConverter: make([]*api.UnitConverter, numTabs),
 	}
 }

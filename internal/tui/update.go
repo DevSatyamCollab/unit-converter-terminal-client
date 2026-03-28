@@ -2,7 +2,7 @@ package tui
 
 import (
 	"strconv"
-	"unit-converter-terminal-client/internal"
+	"unit-converter-terminal-client/internal/api"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/huh"
@@ -17,6 +17,18 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.Height = msg.Height
 		m.ContentWidth = min(defaultWidth, msg.Width)
 		m.Style = DefaultStyle(m.ContentWidth, msg.Height)
+
+	case MsgConvertSuccess:
+		uc := api.UnitConverter(msg)
+		m.UnitConverter[m.ActiveTab] = &uc
+		m.ShowingResult[m.ActiveTab] = true
+		m.Err = nil
+		return m, nil
+
+	case MsgConvertError:
+		m.Err = msg.Err
+		m.ShowingResult[m.ActiveTab] = true
+		return m, nil
 
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -57,7 +69,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	// trigger result
 	if !m.ShowingResult[m.ActiveTab] && m.Forms[m.ActiveTab].State == huh.StateCompleted {
-		var valStr, funit, tunit string
+		var valStr, funit, tunit, url string
 
 		// Determine which variables to read based on the active tab
 		switch m.ActiveTab {
@@ -65,21 +77,23 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			valStr = LengthVal
 			funit = LengthFromUnit
 			tunit = LengthToUnit
+			url = api.LengthURL
 		case 1:
 			valStr = WeightVal
 			funit = WeightFromUnit
 			tunit = WeightToUnit
+			url = api.WeightURL
 		case 2:
 			valStr = TemperatureVal
 			funit = TemperatureFromUnit
 			tunit = TemperatureToUnit
+			url = api.TemperatureURL
 		}
 
 		// Directly parse the correctly selected string variable
 		val, _ := strconv.ParseFloat(valStr, 64)
-
-		m.UnitConverter[m.ActiveTab] = internal.NewUnitConverter(funit, tunit, float32(val), float32(0))
-		m.ShowingResult[m.ActiveTab] = true
+		req := api.NewUnitConverter(funit, tunit, float32(val), 0)
+		cmds = append(cmds, DoConversionCmd(url, req))
 	}
 
 	return m, tea.Batch(cmds...)

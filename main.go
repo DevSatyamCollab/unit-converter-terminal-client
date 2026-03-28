@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 	"os"
-	"unit-converter-terminal-client/tui"
+	"unit-converter-terminal-client/internal/tui"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
