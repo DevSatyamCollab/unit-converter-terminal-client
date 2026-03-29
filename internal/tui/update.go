@@ -92,7 +92,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		// Directly parse the correctly selected string variable
 		val, _ := strconv.ParseFloat(valStr, 64)
-		req := api.NewUnitConverter(funit, tunit, float32(val), 0)
+		req := api.NewUnitConverter(funit, tunit, val, 0)
 		cmds = append(cmds, DoConversionCmd(url, req))
 	}
 

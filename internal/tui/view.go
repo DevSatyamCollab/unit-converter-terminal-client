@@ -2,6 +2,7 @@ package tui
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/charmbracelet/lipgloss"
 )
@@ -52,12 +53,35 @@ func (m *model) getContent() string {
 			)
 		}
 
+		// formating
+		var valstr, ansStr string
+		val := m.UnitConverter[m.ActiveTab].Val
+		ans := m.UnitConverter[m.ActiveTab].Ans
+
+		valDiff := math.Abs(val - math.Round(val))
+		if valDiff == 0 {
+			valstr = fmt.Sprintf("%.f", val)
+		} else if valDiff < 0.001 {
+			valstr = fmt.Sprintf("%g", val)
+		} else {
+			valstr = fmt.Sprintf("%.2f", val)
+		}
+
+		ansDiff := math.Abs(ans - math.Round(ans))
+		if ansDiff == 0 {
+			ansStr = fmt.Sprintf("%.f", ans)
+		} else if ansDiff < 0.001 {
+			ansStr = fmt.Sprintf("%g", ans)
+		} else {
+			ansStr = fmt.Sprintf("%.2f", ans)
+		}
+
 		// 1 kg = 1000g
 		return fmt.Sprintf(
-			"%.f %s = %.1f %s",
-			m.UnitConverter[m.ActiveTab].Val,
+			"%s %s = %s %s\n\nPress 'esc' to reset",
+			valstr,
 			m.UnitConverter[m.ActiveTab].FromUnit,
-			m.UnitConverter[m.ActiveTab].Ans,
+			ansStr,
 			m.UnitConverter[m.ActiveTab].ToUnit,
 		)
 

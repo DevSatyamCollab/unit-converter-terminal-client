@@ -17,11 +17,11 @@ const (
 type UnitConverter struct {
 	FromUnit string  `json:"fromUnit"`
 	ToUnit   string  `json:"toUnit"`
-	Val      float32 `json:"value"`
-	Ans      float32 `json:"ans"`
+	Val      float64 `json:"value"`
+	Ans      float64 `json:"ans"`
 }
 
-func NewUnitConverter(funit, tunit string, v, a float32) *UnitConverter {
+func NewUnitConverter(funit, tunit string, v, a float64) *UnitConverter {
 	return &UnitConverter{
 		FromUnit: funit,
 		ToUnit:   tunit,
